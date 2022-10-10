@@ -1,0 +1,101 @@
+﻿
+@model IEnumerable<WebTaskManager.Models.WorkTask>
+@using WebTaskManager.Models
+
+<h2>Список задач</h2>
+
+<table class="table">
+    <tr>
+        <th>№</th>
+        <th>Название задачи</th>
+        <th>Описание задачи</th>
+        <th>Статус</th>
+        <th>Исполнитель</th>
+        <th>Действие</th>
+    </tr>
+
+    @{
+        int i = 0;
+        string formId;
+
+        foreach (var item in ViewBag.WorkTasks)
+        {
+            i++;
+            formId = "form" + item.Id;
+            <tr>
+                <td>@i</td>
+                <td>@item.Name</td>
+                <td>@item.Body</td>
+                <td>@item.Status</td>
+                <td>
+                    @if (item.Status == Status.Created)
+                    {
+                        <select class="@item.Id">
+                            <option disabled selected value="0">--Выбрать--</option>
+                            @foreach (var user in ViewBag.Users)
+                            {
+                                <option val="@user.Id" id="@user.Id">@user.Name</option>
+                            }
+                        </select>
+                    }
+                    else
+                    {
+                        <!--да, дичь, знаю-->
+                        foreach (var user in ViewBag.Users)
+                        {
+                            if (user.Id == item.ExecutorId)
+                            {
+                                <label>@user.Name</label>
+                                break;
+                            }
+                        }
+                    }
+                </td>
+                <td>
+                    @if (item.Status == Status.Created)
+                    {
+                        <form id="@formId" asp-controller="Home" asp-action="AppointTask" method="post">
+                            <input type="submit" value="Назначить исполнителя" class="btn btn-primary" />
+                        </form>
+                    }
+
+                    @if (item.Status == Status.Completed)
+                    {
+                        <form asp-controller="Home" asp-action="ConfirmTask" asp-route-id="@item.Id"  method="post">
+                            <input type="submit" value="Подтвердить выполнение" class="btn btn-primary" />
+                        </form>
+                    }
+                    @if (item.Status == Status.Taken)
+                    {
+                        <label>В работе</label>
+                    }
+                   
+                    @if (item.Status == Status.Confirmed)
+                    {
+                        <label>Выполнена</label>
+                    }
+</tr>
+        }
+    }
+
+</table>
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            $('select').change(function () {
+                var id = $(this).children(":selected").attr("id");
+                var cls = $(this).attr("class");
+                var frm = $('form' + '#form' + cls);
+
+                var action = frm.attr('action')
+                if (action != null) {
+                    frm.attr('action', 'AppointTask/' + cls + '?userid=' + id)
+                }
+
+            })
+        })
+
+    </script>
+}

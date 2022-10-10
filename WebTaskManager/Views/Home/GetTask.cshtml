@@ -1,0 +1,49 @@
+﻿@model IEnumerable<WebTaskManager.Models.WorkTask>
+
+
+<h2>Список задач на выполнение:</h2>
+
+<table class="table">
+    <tr>
+        <th>№</th>
+        <th>Название задачи</th>
+        <th>Описание задачи</th>
+        <th>Действие</th>
+    </tr>
+
+    @{
+        int i = 0;
+        foreach (var item in Model)
+        {
+            i++;
+            <tr>
+                <td>@i</td>
+                <td>@item.Name</td>
+                <td>@item.Body</td>
+                <td>
+                    @if (item.Status == Status.Appointed)
+                    {
+                        <form asp-controller="Home" asp-action="StartExecute" asp-route-id="@item.Id" method="post">
+                            <input type="submit" value="Взять задачу" class="btn btn-primary" />
+                        </form>
+                    }
+                    @if (item.Status == Status.Taken)
+                    {
+                        <form asp-controller="Home" asp-action="StopExecute" asp-route-id="@item.Id" method="post">
+                            <input type="submit" value="Сообщить о выполнении" class="btn btn-primary" />
+                        </form>
+                    }
+                    @if (item.Status == Status.Completed)
+                    {
+                        <label>На рассмотрении</label>
+                    }
+                    @if (item.Status == Status.Confirmed)
+                    {
+                        <label>Выполнена</label>
+                    }
+            </tr>
+            }
+        }
+
+
+    </table>

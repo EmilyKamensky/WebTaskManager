@@ -1,0 +1,26 @@
+﻿@model WebTaskManager.Models.WorkTaskModel
+
+
+<h2>Создать новую задачу:</h2>
+
+<form asp-action="CreateTask" asp-controller="WorkTask" asp-antiforgery="true">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div>
+        <div class="form-group">
+            <label asp-for="Name">Введите название задачи:</label><br />
+            <input type="text" asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Body">Опишите задачу:</label><br />
+            <textarea asp-for="Body" class="form-control" rows="3"> </textarea>
+            <span asp-validation-for="Body" />
+        </div>
+       
+        <div class="form-group">
+            <input type="submit" value="Создать" class="btn btn-primary" />
+        </div>
+    </div>
+
+</form>
+
